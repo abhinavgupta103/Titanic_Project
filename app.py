@@ -57,18 +57,14 @@ from sklearn.svm import SVC
 model = SVC(kernel='linear')
 model.fit(X_train, y_train)
 
-
-
-
 predictions = model.predict(X_test)
+
 
 newUser=[]
 newUser.append([3,0,38.0,0,0,1,1,0,0,0,0])
 print(X_test)
 prediction = 0
 prediction = model.predict(newUser)
-prediction = prediction.tolist()
-print(prediction)
 
 
 @app.route("/")
@@ -87,13 +83,20 @@ def index():
 @app.route("/send", methods=["GET", "POST"])
 def send():
     if request.method == "POST":
-        userName = request.form["userName"]
-        newUser.append(userName)
-        userAge = request.form["userAge"]
-        newUser.append(userAge)
-        userTicket = request.form["userTicket"]
-        newUser.append(userTicket)
+
+
+
+        newUser[0][2]= request.form["userAge"]
+        newUser[0][6]= request.form["userTicket"]
+        # userName[0] = request.form["userName"]
+        # newUser.append(userName)
+        # userAge = request.form["userAge"]
+        # newUser.append(userAge)
+        # userTicket = request.form["userTicket"]
+        # newUser.append(userTicket)
         
+
+
         return redirect("/result", code=302)
 
     return render_template("form.html")
