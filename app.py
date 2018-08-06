@@ -62,6 +62,10 @@ import pickle
 s = pickle.dumps(model)
 model = pickle.loads(s)
 
+from sklearn.externals import joblib
+joblib.dump(model, 'model.pkl') 
+model = joblib.load('model.pkl') 
+
 predictions = model.predict(X_test)
 
 
