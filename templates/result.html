@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pet Pals!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body style="background: lightblue; color: black">
+    <div class="container">
+        <div class="jumbotron" style="text-align: center">
+            <h1>Titanic Project</h1>
+            
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h1 style="text-align: center"> Congragulations You would {{ prediction }}on Titanic accident</h1>
+                <div id="plot"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <a href="templates/index.html">Go Home Page </a>
+
+
+        </div>
+
+        <img src="../static/images/Titanic_2.jpg" alt="Titanic" style="height: 500px">
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
