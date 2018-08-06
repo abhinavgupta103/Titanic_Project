@@ -23,18 +23,18 @@ import pandas as pd
 
 train_data = pd.read_csv('Resources/train.csv')
 test_data = pd.read_csv('Resources/test.csv')
-train_data.head()
+
 
 train_data_cleaned = pd.read_csv('AG_train-test.csv')
-train_data_cleaned.head()
+
 
 X_cleaned = train_data_cleaned[["Sex","Pclass","SibSp", "Age", "Fare", "Embarked"]]
 y_cleaned = train_data_cleaned["Survived"].values.reshape(-1, 1)
 target_names = ["Survived", "Not Survived"]
-print(X_cleaned.shape, y_cleaned.shape)
+
 
 X_cleaned = pd.get_dummies(X_cleaned, columns=["Sex"])
-X_cleaned.head()
+
 
 # Create the bins in which Data will be held
 # Bins are 0 to 25, 25 to 50, 50 to 75, 75 to 100
@@ -44,10 +44,10 @@ bins = [0, 100, 200, 300, 400, 550]
 fare_group_names = ['Vey Low',"Low", 'Okay', 'High', 'Highest']
 
 X_cleaned["Fare"] = pd.cut(X_cleaned["Fare"], bins, labels=fare_group_names)
-X_cleaned.head()
+
 
 X_cleaned = pd.get_dummies(X_cleaned, columns=["Fare"])
-X_cleaned.head()
+
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_cleaned, y_cleaned, random_state=42)
@@ -61,11 +61,11 @@ predictions = model.predict(X_test)
 
 
 newUser=[]
-newUser.append([3,0,38.0,0,0,1,1,0,0,0,0])
-print(X_test)
+newUser.append([3,0,35,0,0,1,1,0,0,0,0])
+
 prediction = 0
 prediction = model.predict(newUser)
-
+print(prediction)
 
 @app.route("/")
 def index():
