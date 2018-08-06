@@ -13,7 +13,6 @@ from flask_sqlalchemy import SQLAlchemy
 #################################################
 app = Flask(__name__)
 
-
 import warnings
 warnings.simplefilter('ignore')
 
@@ -26,45 +25,46 @@ train_data = pd.read_csv('Resources/train.csv')
 test_data = pd.read_csv('Resources/test.csv')
 train_data.head()
 
-train_data = train_data.dropna(axis=0, how='any', thresh=None, subset=None, inplace=False)
-test_data = test_data.dropna(axis=0, how='any', thresh=None, subset=None, inplace=False)
+train_data_cleaned = pd.read_csv('AG_train-test.csv')
+train_data_cleaned.head()
 
-X = train_data[["Sex","Pclass","SibSp", "Age", "Fare"]]
-y = train_data["Survived"].values.reshape(-1, 1)
+X_cleaned = train_data_cleaned[["Sex","Pclass","SibSp", "Age", "Fare", "Embarked"]]
+y_cleaned = train_data_cleaned["Survived"].values.reshape(-1, 1)
 target_names = ["Survived", "Not Survived"]
+print(X_cleaned.shape, y_cleaned.shape)
 
-X = pd.get_dummies(X, columns=["Sex"])
+X_cleaned = pd.get_dummies(X_cleaned, columns=["Sex"])
+X_cleaned.head()
 
+# Create the bins in which Data will be held
 # Bins are 0 to 25, 25 to 50, 50 to 75, 75 to 100
 bins = [0, 100, 200, 300, 400, 550]
 
 # Create the names for the four bins
-fare_group_names = ['Extra Economy Class',"Economy Class", 'Middle Class', 'Business Class', 'Extra Business Class']
+fare_group_names = ['Vey Low',"Low", 'Okay', 'High', 'Highest']
 
-X["Fare"] = pd.cut(X["Fare"], bins, labels=fare_group_names)
+X_cleaned["Fare"] = pd.cut(X_cleaned["Fare"], bins, labels=fare_group_names)
+X_cleaned.head()
 
-X = pd.get_dummies(X, columns=["Fare"])
+X_cleaned = pd.get_dummies(X_cleaned, columns=["Fare"])
+X_cleaned.head()
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_cleaned, y_cleaned, random_state=42)
 
 # Support vector machine linear classifier
-from sklearn.svm import SVC 
+from sklearn.svm import SVC
 model = SVC(kernel='linear')
 model.fit(X_train, y_train)
 
-model.score(X_test, y_test)
 
-# Calculate classification report
-from sklearn.metrics import classification_report
 
 
 predictions = model.predict(X_test)
 
 newUser=[]
-newUser.append([25,0,1,0,1,0,0,0,0,0])
-newUser_shaped = np.reshape(newUser, (-1, 1))
-
+newUser.append([3,0,38.0,0,0,1,1,0,0,0,0])
+print(X_test)
 prediction = 0
 prediction = model.predict(newUser)
 prediction = prediction.tolist()
@@ -101,7 +101,11 @@ def send():
 
 @app.route("/result")
 def pals():
-    return render_template('result.html', prediction = prediction )
+
+    if prediction[0] == 1:
+        return render_template('result.html', prediction = "Survive" )
+    else:
+        return render_template('result.html', prediction = "Die" )
 
 #Run the app. debug=True is essential to be able to rerun the server any time changes are saved to the Python file
 if __name__ == "__main__":
