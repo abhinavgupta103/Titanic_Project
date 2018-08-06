@@ -92,7 +92,10 @@ def index():
 @app.route("/send", methods=["GET", "POST"])
 def send():
     if request.method == "POST":
-        userAge= request.form["userAge"]
+        newUser.append([3,0,35,0,0,1,1,0,0,0,0])
+        # deahtuser.append([3,1,22.0,0,1,0,1,0,0,0,0])
+        userEmbarked = request.form["userEmbarked"]
+        userAge = request.form["userAge"]
         userTicket= request.form["userTicket"]
         userGender= request.form["userGender"]
         # userName[0] = request.form["userName"]
@@ -101,10 +104,18 @@ def send():
         # newUser.append(userAge)
         # userTicket = request.form["userTicket"]
         # newUser.append(userTicket)
+        newUser[0][1]= int(userEmbarked)
         newUser[0][2]= int(userAge)
         newUser[0][6]= int(userTicket)
-        newUser[0][4]= int(userGender)
-        print(newUser)
+        if userGender == "male":
+            newUser[0][4]= 1
+            newUser[0][5]= 0
+        else:
+            newUser[0][4]= 0
+            newUser[0][5]= 1
+
+        prediction = model.predict(newUser)
+        
         return redirect("/result", code=302)
         # return jsonify(newUser)
 
@@ -113,11 +124,15 @@ def send():
 
 @app.route("/result")
 def pals():
-
+    
+    prediction = model.predict(newUser)
     if prediction[0] == 1:
-        return render_template('result.html', prediction = "Survived" )
+
+        
+        return render_template('result.html', prediction = "Survived", result_list = newUser )
     else:
-        return render_template('result.html', prediction = "Died" )
+        
+        return render_template('result.html', prediction = "Died", result_list = newUser )
 
 #Run the app. debug=True is essential to be able to rerun the server any time changes are saved to the Python file
 if __name__ == "__main__":
