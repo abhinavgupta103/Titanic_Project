@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+
 train_data = pd.read_csv('Resources/train.csv')
 test_data = pd.read_csv('Resources/test.csv')
 
@@ -57,15 +58,19 @@ from sklearn.svm import SVC
 model = SVC(kernel='linear')
 model.fit(X_train, y_train)
 
+import pickle
+s = pickle.dumps(model)
+model = pickle.loads(s)
+
 predictions = model.predict(X_test)
 
 
 newUser=[]
 newUser.append([3,0,35,0,0,1,1,0,0,0,0])
 
-prediction = 0
 prediction = model.predict(newUser)
 print(prediction)
+
 
 @app.route("/")
 def index():
@@ -83,21 +88,21 @@ def index():
 @app.route("/send", methods=["GET", "POST"])
 def send():
     if request.method == "POST":
-
-
-
-        newUser[0][2]= request.form["userAge"]
-        newUser[0][6]= request.form["userTicket"]
+        userAge= request.form["userAge"]
+        userTicket= request.form["userTicket"]
+        userGender= request.form["userGender"]
         # userName[0] = request.form["userName"]
         # newUser.append(userName)
         # userAge = request.form["userAge"]
         # newUser.append(userAge)
         # userTicket = request.form["userTicket"]
         # newUser.append(userTicket)
-        
-
-
+        newUser[0][2]= int(userAge)
+        newUser[0][6]= int(userTicket)
+        newUser[0][4]= int(userGender)
+        print(newUser)
         return redirect("/result", code=302)
+        # return jsonify(newUser)
 
     return render_template("form.html")
 
@@ -106,9 +111,9 @@ def send():
 def pals():
 
     if prediction[0] == 1:
-        return render_template('result.html', prediction = "Survive" )
+        return render_template('result.html', prediction = "Survived" )
     else:
-        return render_template('result.html', prediction = "Die" )
+        return render_template('result.html', prediction = "Died" )
 
 #Run the app. debug=True is essential to be able to rerun the server any time changes are saved to the Python file
 if __name__ == "__main__":
