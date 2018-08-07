@@ -13,8 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 #################################################
 app = Flask(__name__)
 
-import warnings
-warnings.simplefilter('ignore')
+# import warnings
+# warnings.simplefilter('ignore')
 
 # %matplotlib inline
 import matplotlib.pyplot as plt
