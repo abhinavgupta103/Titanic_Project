@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 # read train and test csv files
-train_data_cleaned_v2 = pd.read_csv('AG_train-test_v2.csv')
+train_data_cleaned_v2 = pd.read_csv('Resources/AG_train-test_v2.csv')
 
 # select the columns will be used in testing
 X = train_data_cleaned_v2.drop('Survived', axis = 1)
@@ -47,8 +47,8 @@ model = pickle.loads(s)
 
 # import joblib to load model
 from sklearn.externals import joblib
-joblib.dump(model, 'model.pkl') 
-model = joblib.load('model.pkl') 
+joblib.dump(model, 'Resources/model.pkl') 
+model = joblib.load('Resources/model.pkl') 
 
 # run X_test to see predictions
 predictions = model.predict(X_test)
