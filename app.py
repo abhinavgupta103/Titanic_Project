@@ -21,24 +21,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
+# read train and test csv files
 train_data = pd.read_csv('Resources/train.csv')
 test_data = pd.read_csv('Resources/test.csv')
 
-
+# read cleaned csv from AG_train test
 train_data_cleaned = pd.read_csv('AG_train-test.csv')
 
-
+# select the columns will be used in testing
 X_cleaned = train_data_cleaned[["Sex","Pclass","SibSp", "Age", "Fare", "Embarked"]]
 y_cleaned = train_data_cleaned["Survived"].values.reshape(-1, 1)
 target_names = ["Survived", "Not Survived"]
 
-
+# get Sex collumn to be binary
 X_cleaned = pd.get_dummies(X_cleaned, columns=["Sex"])
 
 
-# Create the bins in which Data will be held
-# Bins are 0 to 25, 25 to 50, 50 to 75, 75 to 100
+# Create the bins in which Data will be held Bins 
 bins = [0, 100, 200, 300, 400, 550]
 
 # Create the names for the four bins
@@ -46,10 +45,10 @@ fare_group_names = ['Vey Low',"Low", 'Okay', 'High', 'Highest']
 
 X_cleaned["Fare"] = pd.cut(X_cleaned["Fare"], bins, labels=fare_group_names)
 
-
+# get Fare column to be baniry
 X_cleaned = pd.get_dummies(X_cleaned, columns=["Fare"])
 
-
+# import test split and split data 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X_cleaned, y_cleaned, random_state=42)
 
@@ -58,20 +57,24 @@ from sklearn.svm import SVC
 model = SVC(kernel='linear')
 model.fit(X_train, y_train)
 
+# import pickle to store model
 import pickle
 s = pickle.dumps(model)
 model = pickle.loads(s)
 
+# import joblib to load model
 from sklearn.externals import joblib
 joblib.dump(model, 'model.pkl') 
 model = joblib.load('model.pkl') 
 
+# run X_test to see predictions
 predictions = model.predict(X_test)
 
-
+# create new User list to store newUser data
 newUser=[]
 newUser.append([3,0,35,0,0,1,1,0,0,0,0])
 
+# make prediction with new user data
 prediction = model.predict(newUser)
 print(prediction)
 
@@ -93,7 +96,7 @@ def index():
 def send():
     if request.method == "POST":
         newUser.append([3,0,35,0,0,1,1,0,0,0,0])
-        # deahtuser.append([3,1,22.0,0,1,0,1,0,0,0,0])
+        
         userEmbarked = request.form["userEmbarked"]
         userAge = request.form["userAge"]
         userTicket= request.form["userTicket"]
@@ -107,6 +110,7 @@ def send():
         newUser[0][1]= int(userEmbarked)
         newUser[0][2]= int(userAge)
         newUser[0][6]= int(userTicket)
+        
         if userGender == "male":
             newUser[0][4]= 1
             newUser[0][5]= 0
@@ -124,15 +128,12 @@ def send():
 
 @app.route("/result")
 def pals():
-    
     prediction = model.predict(newUser)
-    if prediction[0] == 1:
 
-        
-        return render_template('result.html', prediction = "Survived", result_list = newUser )
+    if prediction[0] == 1:
+        return render_template('result.html', prediction = "Survive", result_list = newUser )
     else:
-        
-        return render_template('result.html', prediction = "Died", result_list = newUser )
+        return render_template('result.html', prediction = "Die", result_list = newUser )
 
 #Run the app. debug=True is essential to be able to rerun the server any time changes are saved to the Python file
 if __name__ == "__main__":
