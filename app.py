@@ -22,35 +22,18 @@ import numpy as np
 import pandas as pd
 
 # read train and test csv files
-train_data = pd.read_csv('Resources/train.csv')
-test_data = pd.read_csv('Resources/test.csv')
-
-# read cleaned csv from AG_train test
-train_data_cleaned = pd.read_csv('AG_train-test.csv')
+train_data_cleaned_v2 = pd.read_csv('AG_train-test_v2.csv')
 
 # select the columns will be used in testing
-X_cleaned = train_data_cleaned[["Sex","Pclass","SibSp", "Age", "Fare", "Embarked"]]
-y_cleaned = train_data_cleaned["Survived"].values.reshape(-1, 1)
-target_names = ["Survived", "Not Survived"]
+X = train_data_cleaned_v2.drop('Survived', axis = 1)
+y = train_data_cleaned_v2['Survived']
 
-# get Sex collumn to be binary
-X_cleaned = pd.get_dummies(X_cleaned, columns=["Sex"])
+X.drop('Unnamed: 0', axis = 1, inplace=True)
 
 
-# Create the bins in which Data will be held Bins 
-bins = [0, 100, 200, 300, 400, 550]
-
-# Create the names for the four bins
-fare_group_names = ['Vey Low',"Low", 'Okay', 'High', 'Highest']
-
-X_cleaned["Fare"] = pd.cut(X_cleaned["Fare"], bins, labels=fare_group_names)
-
-# get Fare column to be baniry
-X_cleaned = pd.get_dummies(X_cleaned, columns=["Fare"])
-
-# import test split and split data 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X_cleaned, y_cleaned, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
 
 # Support vector machine linear classifier
 from sklearn.svm import SVC
@@ -72,7 +55,7 @@ predictions = model.predict(X_test)
 
 # create new User list to store newUser data
 newUser=[]
-newUser.append([3,0,35,0,0,1,1,0,0,0,0])
+newUser.append([3,0,35,0,0,1,1])
 
 # make prediction with new user data
 prediction = model.predict(newUser)
@@ -95,7 +78,7 @@ def index():
 @app.route("/send", methods=["GET", "POST"])
 def send():
     if request.method == "POST":
-        newUser.append([3,0,35,0,0,1,1,0,0,0,0])
+        newUser.append([2,0,20,1,1,1,0])
         
         userEmbarked = request.form["userEmbarked"]
         userAge = request.form["userAge"]
@@ -107,17 +90,26 @@ def send():
         # newUser.append(userAge)
         # userTicket = request.form["userTicket"]
         # newUser.append(userTicket)
-        newUser[0][1]= int(userEmbarked)
-        newUser[0][2]= int(userAge)
-        newUser[0][6]= int(userTicket)
         
-        if userGender == "male":
-            newUser[0][4]= 1
+        newUser[0][6]= int(userEmbarked)
+        newUser[0][2]= int(userAge)
+        
+        if userTicket == "Basic Economy":
             newUser[0][5]= 0
-        else:
-            newUser[0][4]= 0
+        if userTicket == "Economy":
             newUser[0][5]= 1
+        if userTicket == "Middle Class":
+            newUser[0][5]= 2
+        if userTicket == "Business":
+            newUser[0][5]= 3
+        else:
+            newUser[0][5]= 4
 
+
+        if userGender == "male":
+            newUser[0][1]= 0
+        else:
+            newUser[0][1]= 1
         prediction = model.predict(newUser)
         
         return redirect("/result", code=302)
