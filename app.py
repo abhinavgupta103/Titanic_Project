@@ -13,16 +13,16 @@ from flask_sqlalchemy import SQLAlchemy
 #################################################
 app = Flask(__name__)
 
-import warnings
-warnings.simplefilter('ignore')
+# import warnings
+# warnings.simplefilter('ignore')
 
 # %matplotlib inline
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 # read train and test csv files
-train_data_cleaned_v2 = pd.read_csv('AG_train-test_v2.csv')
+train_data_cleaned_v2 = pd.read_csv('Resources/AG_train-test_v2.csv')
 
 # select the columns will be used in testing
 X = train_data_cleaned_v2.drop('Survived', axis = 1)
@@ -136,4 +136,4 @@ def pals():
 
 #Run the app. debug=True is essential to be able to rerun the server any time changes are saved to the Python file
 if __name__ == "__main__":
-    app.run(debug=True, port=5011)
+    app.run(debug=True, port=5012)
