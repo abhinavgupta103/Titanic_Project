@@ -106,10 +106,11 @@ def send():
             newUser[0][5]= 4
 
 
-        if userGender == "male":
+        if userGender == "Male":
             newUser[0][1]= 0
         else:
             newUser[0][1]= 1
+            
         prediction = model.predict(newUser)
         
         return redirect("/result", code=302)
