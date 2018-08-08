@@ -13,8 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 #################################################
 app = Flask(__name__)
 
-# import warnings
-# warnings.simplefilter('ignore')
+import warnings
+warnings.simplefilter('ignore')
 
 # %matplotlib inline
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 # read train and test csv files
-train_data_cleaned_v2 = pd.read_csv('Resources/AG_train-test_v2.csv')
+train_data_cleaned_v2 = pd.read_csv('AG_train-test_v2.csv')
 
 # select the columns will be used in testing
 X = train_data_cleaned_v2.drop('Survived', axis = 1)
@@ -47,8 +47,8 @@ model = pickle.loads(s)
 
 # import joblib to load model
 from sklearn.externals import joblib
-joblib.dump(model, 'Resources/model.pkl') 
-model = joblib.load('Resources/model.pkl') 
+joblib.dump(model, 'model.pkl') 
+model = joblib.load('model.pkl') 
 
 # run X_test to see predictions
 predictions = model.predict(X_test)
@@ -91,7 +91,7 @@ def send():
         # userTicket = request.form["userTicket"]
         # newUser.append(userTicket)
         
-        newUser[0][6]= int(userEmbarked)
+        
         newUser[0][2]= int(userAge)
         
         if userTicket == "Basic Economy":
@@ -105,12 +105,18 @@ def send():
         else:
             newUser[0][5]= 4
 
+        if userEmbarked == "C":
+            newUser[0][2]= 0
+        if userTicket == "Q":
+            newUser[0][2]= 1
+        else:
+            newUser[0][2]= 2
 
-        if userGender == "Male":
+
+        if userGender == "male":
             newUser[0][1]= 0
         else:
             newUser[0][1]= 1
-            
         prediction = model.predict(newUser)
         
         return redirect("/result", code=302)
